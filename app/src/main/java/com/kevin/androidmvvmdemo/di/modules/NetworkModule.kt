@@ -1,6 +1,9 @@
 package com.kevin.androidmvvmdemo.di.modules
 
+import com.kevin.androidmvvmdemo.di.modules.Constants.GOOGLE_BASE_URL
 import com.kevin.androidmvvmdemo.di.modules.Constants.QUOTES_BASE_URL
+import com.kevin.androidmvvmdemo.di.qualifiers.GoogleBaseUrl
+import com.kevin.androidmvvmdemo.di.qualifiers.QuotationBaseUrl
 import com.kevin.androidmvvmdemo.model.repo.api.QuoteApiService
 import dagger.Module
 import dagger.Provides
@@ -22,8 +25,16 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    @QuotationBaseUrl
     fun provideBaseUrl(): String {
         return QUOTES_BASE_URL
+    }
+
+    @Provides
+    @Singleton
+    @GoogleBaseUrl
+    fun provideGoogleBaseUrl(): String {
+        return GOOGLE_BASE_URL
     }
 
     @Provides
@@ -52,7 +63,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(client: OkHttpClient, baseUrl: String): Retrofit {
+    fun provideRetrofit(client: OkHttpClient, @QuotationBaseUrl baseUrl: String): Retrofit {
         return Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
