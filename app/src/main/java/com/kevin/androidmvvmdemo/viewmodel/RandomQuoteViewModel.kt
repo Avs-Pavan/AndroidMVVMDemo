@@ -19,7 +19,9 @@ class RandomQuoteViewModel @Inject constructor(private val quoteRepository: Quot
     ViewModel() {
 
     // backing live data
-    private val _quotationLiveData = MutableLiveData<APIResponse<AnimeQuotation?>>()
+    private val _quotationLiveData = MutableLiveData<APIResponse<AnimeQuotation?>>().apply {
+        value = APIResponse.Initial
+    }
 
     // exposed live data
     val quotationLiveData: LiveData<APIResponse<AnimeQuotation?>>
@@ -28,7 +30,7 @@ class RandomQuoteViewModel @Inject constructor(private val quoteRepository: Quot
 
     fun getQuotation() {
         viewModelScope.launch(Dispatchers.IO) {
-            _quotationLiveData.postValue(APIResponse.Loading())
+            _quotationLiveData.postValue(APIResponse.Loading)
             val response = quoteRepository.getRandomQuotation()
             if (response.isSuccessful) {
                 _quotationLiveData.postValue(APIResponse.OnSuccess(response.body()))
