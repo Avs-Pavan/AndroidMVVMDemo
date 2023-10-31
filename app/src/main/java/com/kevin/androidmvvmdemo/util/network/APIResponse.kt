@@ -6,5 +6,7 @@ sealed class APIResponse<out T> {
 
     data class OnError(val error: String) : APIResponse<Nothing>()
 
-    class Loading() : APIResponse<Nothing>()
+    object Loading : APIResponse<Nothing>()
+
+    object Initial : APIResponse<Nothing>()
 }
