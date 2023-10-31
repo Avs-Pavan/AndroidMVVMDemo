@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kevin.androidmvvmdemo.model.data.AnimeQuotation
 import com.kevin.androidmvvmdemo.model.repo.QuoteRepository
+import com.kevin.androidmvvmdemo.util.network.APIResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -18,32 +19,21 @@ class RandomQuoteViewModel @Inject constructor(private val quoteRepository: Quot
     ViewModel() {
 
     // backing live data
-    private val _quotationLiveData = MutableLiveData<AnimeQuotation>()
+    private val _quotationLiveData = MutableLiveData<APIResponse<AnimeQuotation?>>()
 
     // exposed live data
-    val quotationLiveData: LiveData<AnimeQuotation>
+    val quotationLiveData: LiveData<APIResponse<AnimeQuotation?>>
         get() = _quotationLiveData
-
-    // backing error live data
-    private val _error = MutableLiveData<String>()
-
-    //
-    val error: LiveData<String>
-        get() = _error
 
 
     fun getQuotation() {
         viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val response = quoteRepository.getRandomQuotation()
-                if (response.isSuccessful) {
-                    _quotationLiveData.postValue(response.body())
-                } else {
-                    _error.postValue("Some thing went wrong")
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                _error.postValue(e.message)
+            _quotationLiveData.postValue(APIResponse.Loading())
+            val response = quoteRepository.getRandomQuotation()
+            if (response.isSuccessful) {
+                _quotationLiveData.postValue(APIResponse.OnSuccess(response.body()))
+            } else {
+                _quotationLiveData.postValue(APIResponse.OnError("Some thing went wrong"))
             }
         }
     }
