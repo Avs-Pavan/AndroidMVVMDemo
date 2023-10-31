@@ -8,5 +8,5 @@ interface QuoteApiService {
 
 
     @GET("api/random")
-    suspend fun getRandomQuotation():Response<AnimeQuotation>
+    suspend fun getRandomQuotation(): Response<AnimeQuotation>
 }
